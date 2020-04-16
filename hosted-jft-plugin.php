@@ -167,12 +167,12 @@ class Hosted_JFT_Widget extends WP_Widget
     public function widget($args, $instance)
     {
         echo $args['before_widget'];
-        if ( ! empty( $instance['title'] ) ) {
-            echo $args['before_title'] . apply_filters( 'widget_title', $instance['title'] ) . $args['after_title'];
+        if (! empty($instance['title'])) {
+            echo $args['before_title'] . apply_filters('widget_title', $instance['title']) . $args['after_title'];
         }
         $jft_page_url = get_option('jft_page_url');
         $jft_more_text = get_option('jft_more_text');
-        $get_jft = hosted_jft_widget_func( $atts );
+        $get_jft = hosted_jft_widget_func($atts);
         echo '<div class="jft-widget-title">' . $get_jft['title'] . '</div><br/>';
         echo '<div class="jft-widget-excerpt">' . $get_jft['excerpt'] . '</div>';
         echo '&nbsp;&nbsp;<a href="'.$jft_page_url.'" class="jft-widget-link">'.$jft_more_text.'</a><br/><br/>';
