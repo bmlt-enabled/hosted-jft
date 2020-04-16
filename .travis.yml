@@ -4,9 +4,9 @@ php:
 - '7.1'
 env:
   global:
-  - ZIP_FILENAME=fetch-jft-plugin-build${TRAVIS_BUILD_NUMBER}-${TRAVIS_COMMIT}.zip
+  - ZIP_FILENAME=hosted-jft-plugin-build${TRAVIS_BUILD_NUMBER}-${TRAVIS_COMMIT}.zip
   - S3_BUCKET=archives.bmlt.app
-  - S3_KEY=fetch-jft
+  - S3_KEY=hosted-jft
 jobs:
   include:
 
@@ -21,13 +21,13 @@ jobs:
     - BUILD_DIR=build
     - DIST_DIR_S3=dist/s3
     - DIST_DIR_GITHUB=dist/github
-    - GITHUB_RELEASE_FILENAME=fetch-jft-plugin.zip
-    - PLUGIN="fetch-jft"
-    - MAINFILE="fetch-jft-plugin.php"
+    - GITHUB_RELEASE_FILENAME=hosted-jft-plugin.zip
+    - PLUGIN="hosted-jft"
+    - MAINFILE="hosted-jft-plugin.php"
     script:
     - find ./ -type d | xargs chmod 755
     - find ./ -name '*.php' | xargs chmod 644
-    - zip -r $ZIP_FILENAME ./ -x "*.git*" -x "*.editorconfig*" -x "*.travis.yml*" -x "*vendor*" -x "Dockerfile" -x "*assets*" -x "composer.*" -x "*docs*" && mkdir $BUILD_DIR && mv $ZIP_FILENAME $BUILD_DIR/
+    - zip -r $ZIP_FILENAME ./ -x "*.git*" -x "*.editorconfig*" -x "*.travis.yml*" -x "*vendor*" -x "Dockerfile" -x "*assets*" -x "composer.*" && mkdir $BUILD_DIR && mv $ZIP_FILENAME $BUILD_DIR/
     before_deploy:
     - mkdir -p $DIST_DIR_S3 && cp $BUILD_DIR/$ZIP_FILENAME $DIST_DIR_S3/$ZIP_FILENAME
     - mkdir -p $DIST_DIR_GITHUB && cp $BUILD_DIR/$ZIP_FILENAME $DIST_DIR_GITHUB/$GITHUB_RELEASE_FILENAME
@@ -40,7 +40,7 @@ jobs:
     - provider: s3
       access_key_id: AKIAI7JHYFA6DI3WYP5A
       secret_access_key:
-        secure: 193ZJ38xJgI2YZR1XgU5dX2OBeQuN1YTNmQJ09bYjzsKplIJavzE2vfVuocmPp7wWN0V509bIywsiLPUoZaYiHaAA/+wkAdPDCHAkvGpWBNObkW+wd9Qh3rkv5HZ+Kz7NgKWRWEPZqIp9uauEV+EIARjwJLJDbx+7hISidfEPjfDUAnG7rMSoamrcGWAPKTcxIMi+hYWIwGmZOkZY4b6kGKxQbW4duEGz8X26mW43kRbK65pMqzbRepCITIyINddyQZbgtxAAHXUy1OLHxPGCGkhPTnOhRszcncIov6Qg46NquNnCPk9vHGa2OTfP8v27UsUHjxPHORDGYnA/nYxlYseH/3f81p6Wy6RCN1cUUeD7zJCiJb8oM/vYQspzBW1b6NEgeOTmk4oq/6+c/kZ8IfVo8Z+6dKzuMV7HvnuBjBJNCWS3jYYmUV6SeJK4gQ/u+rcFP52gb7HIZU/W2LOmWkpaElQmJWxM9mWsCLRM6mqJT89Bx+WAY7dD44a93s4KKFlQl0tkDvyeElu5aPmx5HDei+v88oFAeMCnraZhpake0oGa2nJ/hUaC8Htqt9O0eqd4tdpiCNsRmS0L+jKvxWW+Ny80ntTP52kVeL8TRqMocxlXdXK+IvXjaL3AYwILxnceNAxCYHupnxnkvhmTLGlzKoxiONCdRjr6PHR4UA=
+        secure: ojTGcwwpR5sAdXnQzLVMlUixniK60pzjege20rHhnqDvIzWdqo+fEVEnpiRt2GqgAXTF+sKd6dQP+KGVf6IY9eIK0G7iQE9ILrafcmv02rneJsZEoZDczHEtVYRIkLjzB2SY81RH79UPHIiXDYdqS+YXT/b1qbKSsd1m/hQz+c1UzZJicFsL8avPwQiwuhRHO6hv4PVlAp87rRUKdYrLE9KqrxFfzP48blZkQL6ydn63hjEQaQlHF3wJFsTFTGmsou5yk4bprzN1yI7WBk/aKClf/SUbpB3hYaLFP6CGF3Xjtrhiu1FF+izsavWkONS9wSL7CfQN9yk2pr2YxOz84udCkBQAbAOg0rXH+Zpm8n/CxVHU0wzBWGIoeWH4wfv/iX1HzGW+fYQPfuX6bew/GwqsfCJ2uCa1lm1cYVA1KaYUk56wZWX9tTQzbLk2pY32kWnanmGhVmhzNp6tZ/E9+rhzmAikzsDpLbU4C5/Ku+bdDbt6wP/J8w8mVK0lOcJ3bMatHCduUvQaQ4f/wZBVoeFiqUPF/w8UgUP3DOGkuP9w0k66RLKELXw7EV/XVUGsNomxQkc0qINWbLSInC15L1g7UIurux5Uv0/d/pnsU+BbyJK1UD2tI91pokqAL/IUIZj0SsO6A1uc30zt7+sZ1npIcoxALzgvEeOHlYzefys=
       bucket: "$S3_BUCKET"
       local_dir: "$DIST_DIR_S3"
       upload-dir: "$S3_KEY"
@@ -51,7 +51,7 @@ jobs:
       edge: true
       release_notes_file: "changelog.txt"
       token:
-        secure: A/Urk3W3i+Oi7OEOPZ54mpIoMZpdoegm6FXTMVQ3Yh1pD4nkExUwMWSwZ+L6TrwWFb6E/lSGNQIMD153xbWFUjn5Gfa6WiQyihy6KeHqpKFWB9Sd6pohNsRJL1vEjiu1ASQ6jWsBCj31bVFLMZv4GGpdsKjS+gu9p9IgtLP63z6Yr3G5c1ZWbVk4FlN+0sCaZUC0LHZADaW4GM7Yo8orAm8DTmwR5eUnyQNHqP6bpHrYVTADUggo3GNd36r+cvPQJr4n8p6P/BY7L8YO8sQFBOH5RKBAle8bwzbIavjh/zNWUFfCUXLUb1oswSuPyRNP1Nx+tqteUSOpgfgkPZugeq5O+mCdccvuYv6rRYXNYMnE1PqyQAO5iAHKgxcYf7X/jBprjjUboOhOOH0oui3xAXVIV0U99+Yvzqma0s5ZayGTCJhf9dXJ/u2oOnvp6y7mENUpwDW7WczuS7TcWb56zfHDRTwcvaVNffhSVz7hwPRnbkZVNZrZcQlBTX6TArKGB1dBaA2Z46HB8mgoGYBg6DcOfTaha7/AtCb4igo3Y0yC/QA3AbZ24CJ+HfiBsp8Wc1slTaiFNy2DSWfjcgb35kH2WP5IhMYrk787ZVAXwgbP5DLgSYKoEKUjmmUlq5KdSUzjd5qJ3irfvHr7Qt3l/SzlVqSFbko3emypKnZhSy8=
+        secure: RBJ7vAQy3uPsrhxDY5wydLDOqgkzcVaiIOuOtQ63YPkqygFWlurhus1ZToWOTVczggJ7nxl1QCMPXCm+XYxrkhK2eUrZtf062TF6V/K8A43wnPc4V5hsiIdvjER2FWb7jecDFfxikh8V7MmyMXOG9QbHd2nX9ar+XLKFmLcPPsL/AEiI8kYdK/XeO7/oB+npDYKHU09S0IEPoEijx8QT4OCoqx3OQJl/qA+E0E/eoxMtgU7knPXYHaTszaOSdW92wT/cy7HMDe+ZW801zkgMrvxOvfEcmjDMwlvbRsRZfmVVKyk7x2M4uo7Lb/rGV4gC6WAwGY73W5dPxvHxJatkWpxyLDX+8GkI0vIoFDsgtzwpsBVLvHxEPB5uiZOYFGp1MlKL/onLSrqjza99ZVpwu/zvYxjyyGpPPwHaDcq3hOdwDxeHzy2e7Jr5428asrA0nLZaTiS43pRsh5ttAkvdnpu2/rN6Di74Tu58Pzf/6zgM1kfckZBY/CVUsNTpB82pEpH1hPm0DbEbNfKHeryYQGqtw5Chz6aL8oMyI56W3E8jml3UXI1iuMhENO3F/FnbdAyWBHKfVY6vnLiM12zYmsDOchtdBORj7CYrUATwbrSS5wibhf9lQ88MCoGamcYUmXVUVh6VKGS3JzdPgu6kWHoqHXRJqxY9agg/8f0JPrk=
       file: "$DIST_DIR_GITHUB/$GITHUB_RELEASE_FILENAME"
       name: "$TRAVIS_TAG"
       on:
@@ -59,7 +59,7 @@ jobs:
         condition: $TRAVIS_TAG != *beta*
     - provider: releases
       api_key:
-        secure: A/Urk3W3i+Oi7OEOPZ54mpIoMZpdoegm6FXTMVQ3Yh1pD4nkExUwMWSwZ+L6TrwWFb6E/lSGNQIMD153xbWFUjn5Gfa6WiQyihy6KeHqpKFWB9Sd6pohNsRJL1vEjiu1ASQ6jWsBCj31bVFLMZv4GGpdsKjS+gu9p9IgtLP63z6Yr3G5c1ZWbVk4FlN+0sCaZUC0LHZADaW4GM7Yo8orAm8DTmwR5eUnyQNHqP6bpHrYVTADUggo3GNd36r+cvPQJr4n8p6P/BY7L8YO8sQFBOH5RKBAle8bwzbIavjh/zNWUFfCUXLUb1oswSuPyRNP1Nx+tqteUSOpgfgkPZugeq5O+mCdccvuYv6rRYXNYMnE1PqyQAO5iAHKgxcYf7X/jBprjjUboOhOOH0oui3xAXVIV0U99+Yvzqma0s5ZayGTCJhf9dXJ/u2oOnvp6y7mENUpwDW7WczuS7TcWb56zfHDRTwcvaVNffhSVz7hwPRnbkZVNZrZcQlBTX6TArKGB1dBaA2Z46HB8mgoGYBg6DcOfTaha7/AtCb4igo3Y0yC/QA3AbZ24CJ+HfiBsp8Wc1slTaiFNy2DSWfjcgb35kH2WP5IhMYrk787ZVAXwgbP5DLgSYKoEKUjmmUlq5KdSUzjd5qJ3irfvHr7Qt3l/SzlVqSFbko3emypKnZhSy8=
+        secure: RBJ7vAQy3uPsrhxDY5wydLDOqgkzcVaiIOuOtQ63YPkqygFWlurhus1ZToWOTVczggJ7nxl1QCMPXCm+XYxrkhK2eUrZtf062TF6V/K8A43wnPc4V5hsiIdvjER2FWb7jecDFfxikh8V7MmyMXOG9QbHd2nX9ar+XLKFmLcPPsL/AEiI8kYdK/XeO7/oB+npDYKHU09S0IEPoEijx8QT4OCoqx3OQJl/qA+E0E/eoxMtgU7knPXYHaTszaOSdW92wT/cy7HMDe+ZW801zkgMrvxOvfEcmjDMwlvbRsRZfmVVKyk7x2M4uo7Lb/rGV4gC6WAwGY73W5dPxvHxJatkWpxyLDX+8GkI0vIoFDsgtzwpsBVLvHxEPB5uiZOYFGp1MlKL/onLSrqjza99ZVpwu/zvYxjyyGpPPwHaDcq3hOdwDxeHzy2e7Jr5428asrA0nLZaTiS43pRsh5ttAkvdnpu2/rN6Di74Tu58Pzf/6zgM1kfckZBY/CVUsNTpB82pEpH1hPm0DbEbNfKHeryYQGqtw5Chz6aL8oMyI56W3E8jml3UXI1iuMhENO3F/FnbdAyWBHKfVY6vnLiM12zYmsDOchtdBORj7CYrUATwbrSS5wibhf9lQ88MCoGamcYUmXVUVh6VKGS3JzdPgu6kWHoqHXRJqxY9agg/8f0JPrk=
       file: "$DIST_DIR_GITHUB/$GITHUB_RELEASE_FILENAME"
       skip_cleanup: true
       name: "$TRAVIS_TAG"
