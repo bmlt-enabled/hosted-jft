@@ -38,9 +38,9 @@ jobs:
     - ./release-notes.sh readme.txt "wp"
     deploy:
     - provider: s3
-      access_key_id: AKIAI7JHYFA6DI3WYP5A
+      access_key_id: AKIA3EWZC3OHKYCL5SIY
       secret_access_key:
-        secure: ojTGcwwpR5sAdXnQzLVMlUixniK60pzjege20rHhnqDvIzWdqo+fEVEnpiRt2GqgAXTF+sKd6dQP+KGVf6IY9eIK0G7iQE9ILrafcmv02rneJsZEoZDczHEtVYRIkLjzB2SY81RH79UPHIiXDYdqS+YXT/b1qbKSsd1m/hQz+c1UzZJicFsL8avPwQiwuhRHO6hv4PVlAp87rRUKdYrLE9KqrxFfzP48blZkQL6ydn63hjEQaQlHF3wJFsTFTGmsou5yk4bprzN1yI7WBk/aKClf/SUbpB3hYaLFP6CGF3Xjtrhiu1FF+izsavWkONS9wSL7CfQN9yk2pr2YxOz84udCkBQAbAOg0rXH+Zpm8n/CxVHU0wzBWGIoeWH4wfv/iX1HzGW+fYQPfuX6bew/GwqsfCJ2uCa1lm1cYVA1KaYUk56wZWX9tTQzbLk2pY32kWnanmGhVmhzNp6tZ/E9+rhzmAikzsDpLbU4C5/Ku+bdDbt6wP/J8w8mVK0lOcJ3bMatHCduUvQaQ4f/wZBVoeFiqUPF/w8UgUP3DOGkuP9w0k66RLKELXw7EV/XVUGsNomxQkc0qINWbLSInC15L1g7UIurux5Uv0/d/pnsU+BbyJK1UD2tI91pokqAL/IUIZj0SsO6A1uc30zt7+sZ1npIcoxALzgvEeOHlYzefys=
+        secure: STSFFnUk42lHyXAAYl/lhA/dj68yMVRSa5ew4E5HlOYWusZ8r84R8GmXHpOdu7+L/78+HsaTKyalrdMOSmGIbgaFX1VQMZ7uuSCl/tcdmam0z7Kfywt455QpFOQFsZPH1G5J7tgTJ2kVynCnF671ASxh2pYcppCgg9iAfVRs6fyfjnjFe2z0E1+XirGMM9XB33VDXLFjVRE6vbEfvesJ5Mi5UPWIpVA9fi2dMfkWA+y+9cm3mYqQlJ6X/wuJJ+/oWjMNZV8Cr/mvuQMelbiaAEw2NyIsFVGuen4hqNKFIbWfBnweVuKwDGnCRq20RH7hjUZQLXAeBxnuM+JXeiTxeEQbFn2o0v9mBBHQnp6mMlaamYxKyOeBdHbuYqhgbdN1r7VM9/AXWz5RMZR3dvzO17iOJdskGiPHe7PK8HRINaIw3knTWpPMtZ+aUwSmioA8ROff45O5KAjxC47JSu/SrS42EPvZVna1DCvmecT/jd3YkN4H0s8OFXtJFW3xTYqLBCPStn2C4/dH1iSVrO9TtHp6rgLdjVMqVO8kN0dh5ymEeoSXXQFQoPYEGQE6UkTlTSwZQxxfpwgeQmtvg9jI6seXpeiTEVluk22wMHYYtj9dMUkl6yvL2KHMUG9F9eEmJwvv5JaaPJiN/kU3Ogqd2LEGshYuFZjd6ecnlfA7nYI=
       bucket: "$S3_BUCKET"
       local_dir: "$DIST_DIR_S3"
       upload-dir: "$S3_KEY"
