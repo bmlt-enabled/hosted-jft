@@ -3,7 +3,7 @@
 Plugin Name: Hosted JFT
 Plugin URI: https://wordpress.org/plugins/hosted-jft/
 Description: Hosted JFT is a plugin that allows an NA Community to host their own translated version of the JFT.
-Version: 1.0.0
+Version: 1.0.1
 Install: Drop this directory into the "wp-content/plugins/" directory and activate it.
 */
 /* Disallow direct access to the plugin file */
