@@ -1,80 +1,74 @@
 language: php
 
 php:
-- '7.1'
+  - '7.1'
 env:
   global:
-  - ZIP_FILENAME=hosted-jft-plugin-build${TRAVIS_BUILD_NUMBER}-${TRAVIS_COMMIT}.zip
-  - S3_BUCKET=archives.bmlt.app
-  - S3_KEY=hosted-jft
+    - ZIP_FILENAME=hosted-jft-plugin-build${TRAVIS_BUILD_NUMBER}-${TRAVIS_COMMIT}.zip
+    - S3_BUCKET=archives.bmlt.app
+    - S3_KEY=hosted-jft
 jobs:
   include:
 
-  - stage: lint
-    install:
-    - composer install
-    script:
-    - find . -name "*.php" ! -path '*/vendor/*' -print0 | xargs -0 -n1 -P8 php -l
-    - vendor/squizlabs/php_codesniffer/bin/phpcs --warning-severity=6 --standard=PSR2 --ignore=vendor --extensions=php --report=summary ./
-  - stage: zip file
-    env:
-    - BUILD_DIR=build
-    - DIST_DIR_S3=dist/s3
-    - DIST_DIR_GITHUB=dist/github
-    - GITHUB_RELEASE_FILENAME=hosted-jft-plugin.zip
-    - PLUGIN="hosted-jft"
-    - MAINFILE="hosted-jft-plugin.php"
-    script:
-    - find ./ -type d | xargs chmod 755
-    - find ./ -name '*.php' | xargs chmod 644
-    - zip -r $ZIP_FILENAME ./ -x "*.git*" -x "*.editorconfig*" -x "*.travis.yml*" -x "*vendor*" -x "Dockerfile" -x "*assets*" -x "composer.*" -x "docker-compose.yml" && mkdir $BUILD_DIR && mv $ZIP_FILENAME $BUILD_DIR/
-    before_deploy:
-    - mkdir -p $DIST_DIR_S3 && cp $BUILD_DIR/$ZIP_FILENAME $DIST_DIR_S3/$ZIP_FILENAME
-    - mkdir -p $DIST_DIR_GITHUB && cp $BUILD_DIR/$ZIP_FILENAME $DIST_DIR_GITHUB/$GITHUB_RELEASE_FILENAME
-    - curl -LO https://raw.githubusercontent.com/bmlt-enabled/bmlt-wordpress-deploy/master/deploy-wordpress.sh
-    - chmod +x deploy-wordpress.sh
-    - curl -LO https://raw.githubusercontent.com/bmlt-enabled/release-notes-tool/master/release-notes.sh
-    - chmod +x release-notes.sh
-    - ./release-notes.sh readme.txt "wp"
-    deploy:
-    - provider: s3
-      access_key_id: AKIA3EWZC3OHKYCL5SIY
-      secret_access_key:
-        secure: STSFFnUk42lHyXAAYl/lhA/dj68yMVRSa5ew4E5HlOYWusZ8r84R8GmXHpOdu7+L/78+HsaTKyalrdMOSmGIbgaFX1VQMZ7uuSCl/tcdmam0z7Kfywt455QpFOQFsZPH1G5J7tgTJ2kVynCnF671ASxh2pYcppCgg9iAfVRs6fyfjnjFe2z0E1+XirGMM9XB33VDXLFjVRE6vbEfvesJ5Mi5UPWIpVA9fi2dMfkWA+y+9cm3mYqQlJ6X/wuJJ+/oWjMNZV8Cr/mvuQMelbiaAEw2NyIsFVGuen4hqNKFIbWfBnweVuKwDGnCRq20RH7hjUZQLXAeBxnuM+JXeiTxeEQbFn2o0v9mBBHQnp6mMlaamYxKyOeBdHbuYqhgbdN1r7VM9/AXWz5RMZR3dvzO17iOJdskGiPHe7PK8HRINaIw3knTWpPMtZ+aUwSmioA8ROff45O5KAjxC47JSu/SrS42EPvZVna1DCvmecT/jd3YkN4H0s8OFXtJFW3xTYqLBCPStn2C4/dH1iSVrO9TtHp6rgLdjVMqVO8kN0dh5ymEeoSXXQFQoPYEGQE6UkTlTSwZQxxfpwgeQmtvg9jI6seXpeiTEVluk22wMHYYtj9dMUkl6yvL2KHMUG9F9eEmJwvv5JaaPJiN/kU3Ogqd2LEGshYuFZjd6ecnlfA7nYI=
-      bucket: "$S3_BUCKET"
-      local_dir: "$DIST_DIR_S3"
-      upload-dir: "$S3_KEY"
-      skip_cleanup: true
-      on:
-        all_branches: true
-    - provider: releases
-      edge: true
-      release_notes_file: "changelog.txt"
-      token:
-        secure: RBJ7vAQy3uPsrhxDY5wydLDOqgkzcVaiIOuOtQ63YPkqygFWlurhus1ZToWOTVczggJ7nxl1QCMPXCm+XYxrkhK2eUrZtf062TF6V/K8A43wnPc4V5hsiIdvjER2FWb7jecDFfxikh8V7MmyMXOG9QbHd2nX9ar+XLKFmLcPPsL/AEiI8kYdK/XeO7/oB+npDYKHU09S0IEPoEijx8QT4OCoqx3OQJl/qA+E0E/eoxMtgU7knPXYHaTszaOSdW92wT/cy7HMDe+ZW801zkgMrvxOvfEcmjDMwlvbRsRZfmVVKyk7x2M4uo7Lb/rGV4gC6WAwGY73W5dPxvHxJatkWpxyLDX+8GkI0vIoFDsgtzwpsBVLvHxEPB5uiZOYFGp1MlKL/onLSrqjza99ZVpwu/zvYxjyyGpPPwHaDcq3hOdwDxeHzy2e7Jr5428asrA0nLZaTiS43pRsh5ttAkvdnpu2/rN6Di74Tu58Pzf/6zgM1kfckZBY/CVUsNTpB82pEpH1hPm0DbEbNfKHeryYQGqtw5Chz6aL8oMyI56W3E8jml3UXI1iuMhENO3F/FnbdAyWBHKfVY6vnLiM12zYmsDOchtdBORj7CYrUATwbrSS5wibhf9lQ88MCoGamcYUmXVUVh6VKGS3JzdPgu6kWHoqHXRJqxY9agg/8f0JPrk=
-      file: "$DIST_DIR_GITHUB/$GITHUB_RELEASE_FILENAME"
-      name: "$TRAVIS_TAG"
-      on:
-        tags: true
-        condition: $TRAVIS_TAG != *beta*
-    - provider: releases
-      api_key:
-        secure: RBJ7vAQy3uPsrhxDY5wydLDOqgkzcVaiIOuOtQ63YPkqygFWlurhus1ZToWOTVczggJ7nxl1QCMPXCm+XYxrkhK2eUrZtf062TF6V/K8A43wnPc4V5hsiIdvjER2FWb7jecDFfxikh8V7MmyMXOG9QbHd2nX9ar+XLKFmLcPPsL/AEiI8kYdK/XeO7/oB+npDYKHU09S0IEPoEijx8QT4OCoqx3OQJl/qA+E0E/eoxMtgU7knPXYHaTszaOSdW92wT/cy7HMDe+ZW801zkgMrvxOvfEcmjDMwlvbRsRZfmVVKyk7x2M4uo7Lb/rGV4gC6WAwGY73W5dPxvHxJatkWpxyLDX+8GkI0vIoFDsgtzwpsBVLvHxEPB5uiZOYFGp1MlKL/onLSrqjza99ZVpwu/zvYxjyyGpPPwHaDcq3hOdwDxeHzy2e7Jr5428asrA0nLZaTiS43pRsh5ttAkvdnpu2/rN6Di74Tu58Pzf/6zgM1kfckZBY/CVUsNTpB82pEpH1hPm0DbEbNfKHeryYQGqtw5Chz6aL8oMyI56W3E8jml3UXI1iuMhENO3F/FnbdAyWBHKfVY6vnLiM12zYmsDOchtdBORj7CYrUATwbrSS5wibhf9lQ88MCoGamcYUmXVUVh6VKGS3JzdPgu6kWHoqHXRJqxY9agg/8f0JPrk=
-      file: "$DIST_DIR_GITHUB/$GITHUB_RELEASE_FILENAME"
-      skip_cleanup: true
-      name: "$TRAVIS_TAG"
-      prerelease: true
-      on:
-        tags: true
-        condition: $TRAVIS_TAG =~ "beta"
-#    - provider: script
-#      script: ./deploy-wordpress.sh
-#      skip_cleanup: true
-#      on:
-#        tags: true
-notifications:
-  slack:
-    rooms:
-    - secure: bmoIugz9sorNakDw7LnfC3iB7a4CnhuZeZBAVxefSoqipbZAGLoA86pSaDwSK3kNsCRAUXyHJ0pBxxJuCO5jrQKhl9TNBFQQ60KPvn3LQj9OXXTSHp4qoqBytipQGyjeqySu4fJt8Lc0u8FQ0qinxn21qF7K7c54aygVKQd+nxf/+9rVzSOJIY+c6UEBb9FwKfHl9cOJy8nTHYPNl0ZbQaYVS1gvyOV2jzrlurOXb0t2xYs2W9EOAjUd2E4ZVaD8EEyRZ9zcvy8ne41qZGBLMJjHZo6TdN4x0AdEYiITst5fKj+YILNCaVQMyURu5h65RPVXyjZ/eIOUixSt1EOpMTxWcRiDn3H7B2F7eEUIXyo/c5x1AEWEQFLGK+/PEqWx/zaBG0rJJdzVbLaqet2kg5piy+f84EBCZiXm7CZIYPMSjLJo9AJDcY9iSRgvpRnkSagHZAgMILNut53aNPd8i3FoOeycPwux/KDQpSz0uIpn4xu26VY0bzxJ8N27VugUhmNhLCN05Hgw8GoDjEoh4EgPPsdNVzXT4mzpjx2GfhRZOm/78LUSDB/w3oIAEPzRFfhberBAo0l2w9T5+Ynbw9yyquYgNUOW/nMhbwqOPbWqndHa8Xume0DXp2COHEqoSZx4gDIIRRKjKdsrFjjasWB5K7IQXQfBoiGAL7EscNA=
-    on_success: change
-  email: false
+    - stage: lint
+      install:
+        - composer install
+      script:
+        - find . -name "*.php" ! -path '*/vendor/*' -print0 | xargs -0 -n1 -P8 php -l
+        - vendor/squizlabs/php_codesniffer/bin/phpcs --warning-severity=6 --standard=PSR2 --ignore=vendor --extensions=php --report=summary ./
+    - stage: zip file
+      env:
+        - BUILD_DIR=build
+        - DIST_DIR_S3=dist/s3
+        - DIST_DIR_GITHUB=dist/github
+        - GITHUB_RELEASE_FILENAME=hosted-jft-plugin.zip
+        - PLUGIN="hosted-jft"
+        - MAINFILE="hosted-jft-plugin.php"
+      script:
+        - find ./ -type d | xargs chmod 755
+        - find ./ -name '*.php' | xargs chmod 644
+        - zip -r $ZIP_FILENAME ./ -x "*.git*" -x "*.editorconfig*" -x "*.travis.yml*" -x "*vendor*" -x "Dockerfile" -x "*assets*" -x "composer.*" -x "*docs*" && mkdir $BUILD_DIR && mv $ZIP_FILENAME $BUILD_DIR/
+      before_deploy:
+        - mkdir -p $DIST_DIR_S3 && cp $BUILD_DIR/$ZIP_FILENAME $DIST_DIR_S3/$ZIP_FILENAME
+        - mkdir -p $DIST_DIR_GITHUB && cp $BUILD_DIR/$ZIP_FILENAME $DIST_DIR_GITHUB/$GITHUB_RELEASE_FILENAME
+        - curl -LO https://raw.githubusercontent.com/bmlt-enabled/bmlt-wordpress-deploy/master/deploy-wordpress.sh
+        - chmod +x deploy-wordpress.sh
+        - curl -LO https://raw.githubusercontent.com/bmlt-enabled/release-notes-tool/master/release-notes.sh
+        - chmod +x release-notes.sh
+        - ./release-notes.sh readme.txt "wp"
+      deploy:
+        - provider: s3
+          access_key_id: AKIA3EWZC3OHKYCL5SIY
+          secret_access_key:
+            secure: noBjoK4P/qXeg3UFTHzk5sHhu1l6j97BQkyHhVM3mzydlWJJel1M74f+iua0tRd0XMXFCbg7IvryrfN8FIHkqDSmKFotnpDdyqoqewyhQoEYGNXK/zS5Cy6WuVsjl+hMIsGuQVCh1EDFuxXnyt2R2mHG9PPT25UBYcD0AHeL542gb8cA8WcLGcCcID5hVNRnbBc1jtFav8LZaHYkV+4PiI7P8/ObaWObeXQFrj+6HiX1zmRi45heTvjZ43kbfUoz7P/7TGGWGXZQgqr8JTEEcm1PtkysvDOF7VqvNiLOZ25NxQuzBn0XhqgutJqsRFjZEuYCe4eD4wyx28VDDOM6FQfLNl2R/p/RXjx2XcKt9fmgmv4TvU/Vc4blr0Rnb464aC3MXyls5ZuV529+FN4+fcpm4TT3rsBGQgIRN9zUhSUHXaE5175UCK2OHAHnaEz7AltJj0EDj2/8aY5EK3S0RdIKKNFpCUAZW3cSZh/2ARzDB9CCaQqBKIMK01DvEDyKbUDlWFbxfIA0bs75xqWM77kRqEKGa5SKWze7kyGO+dGGxLNZJ28o/MXP4g9zgV0MhhufEnKFudenepDk6xj9RtfuatfPWVfuYuUDaOwyUh/SfbkkQPqR8rlqSXZZ8ip3Jtky8ccMgkid7DpRL5OOZ00Xr9puozQSdK0PoGakWSs=
+          bucket: "$S3_BUCKET"
+          local_dir: "$DIST_DIR_S3"
+          upload-dir: "$S3_KEY"
+          skip_cleanup: true
+          on:
+            all_branches: true
+        - provider: releases
+          edge: true
+          release_notes_file: "changelog.txt"
+          token:
+            secure: U4f+yh7ZCJeNz5kRW5YgOqLGqkPc6TupKYlV76Poc0LIV1o7PhfW5Uam+BBhbRORnYxV2s3vXwdWF6hzyjNtQljzUKZofx1LOYl6PzkD1RvzndXPEFb2xj5ASpcgDIYjbMFr3ZYkIalOuPKmdbpOHdavF9s3MMJqQZA2OPF+5JDLDpU+CpSepPtB1xEuc5IBXf98jBt3CuPTLkcSccuuf5O7lBTdXHAieEQnIiX8qxlsfsbj1lgj3FJbvAwAevfkHMHb/IidTMkCgTwFhvjbGtNLhrpkfRo7NKvTE5qe8JpJHCiwJgRMHbhy2Cv0dORjUD5WPfuTQkbe24CB/z64xwzQgZv7edbO977mxMXG9CIcF7ZvzTy26d3LXAHq8uECIgYoFS/IfpyJG0KOWhRt5Zpo7Mr7+kPwuVL1PzDQ4ciMKhlh5CxReSFCPs5ER4L4FkWD1WvVvzWknUpH759ONlaHV97COhZIaWOtvXKsLSETi/F6+JoKiAhKTNrklWPg67S7YvuIWbGCOt+/N0DnKBmf3RuEu+Nj9bvVgmv6xE0kpN4FK1d/7LX53Vn/xHM87HQfl6hWhwXWNf+QP+0LSEImaJLx1jtJqjOTnlh06Z2Nb3pszmaSKe59wHn8ig/kn/b/DW1K/f2XxeFZxkfCW/gEtL2J02KVNE8y3Ncr7M0=
+          file: "$DIST_DIR_GITHUB/$GITHUB_RELEASE_FILENAME"
+          name: "$TRAVIS_TAG"
+          on:
+            tags: true
+            condition: $TRAVIS_TAG != *beta*
+        - provider: releases
+          api_key:
+            secure: U4f+yh7ZCJeNz5kRW5YgOqLGqkPc6TupKYlV76Poc0LIV1o7PhfW5Uam+BBhbRORnYxV2s3vXwdWF6hzyjNtQljzUKZofx1LOYl6PzkD1RvzndXPEFb2xj5ASpcgDIYjbMFr3ZYkIalOuPKmdbpOHdavF9s3MMJqQZA2OPF+5JDLDpU+CpSepPtB1xEuc5IBXf98jBt3CuPTLkcSccuuf5O7lBTdXHAieEQnIiX8qxlsfsbj1lgj3FJbvAwAevfkHMHb/IidTMkCgTwFhvjbGtNLhrpkfRo7NKvTE5qe8JpJHCiwJgRMHbhy2Cv0dORjUD5WPfuTQkbe24CB/z64xwzQgZv7edbO977mxMXG9CIcF7ZvzTy26d3LXAHq8uECIgYoFS/IfpyJG0KOWhRt5Zpo7Mr7+kPwuVL1PzDQ4ciMKhlh5CxReSFCPs5ER4L4FkWD1WvVvzWknUpH759ONlaHV97COhZIaWOtvXKsLSETi/F6+JoKiAhKTNrklWPg67S7YvuIWbGCOt+/N0DnKBmf3RuEu+Nj9bvVgmv6xE0kpN4FK1d/7LX53Vn/xHM87HQfl6hWhwXWNf+QP+0LSEImaJLx1jtJqjOTnlh06Z2Nb3pszmaSKe59wHn8ig/kn/b/DW1K/f2XxeFZxkfCW/gEtL2J02KVNE8y3Ncr7M0=
+          file: "$DIST_DIR_GITHUB/$GITHUB_RELEASE_FILENAME"
+          skip_cleanup: true
+          name: "$TRAVIS_TAG"
+          prerelease: true
+          on:
+            tags: true
+            condition: $TRAVIS_TAG =~ "beta"
+        - provider: script
+          script: ./deploy-wordpress.sh
+          skip_cleanup: true
+          on:
+            tags: true
