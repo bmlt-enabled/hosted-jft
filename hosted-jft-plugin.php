@@ -3,7 +3,7 @@
 Plugin Name: Hosted JFT
 Plugin URI: https://wordpress.org/plugins/hosted-jft/
 Description: Hosted JFT is a plugin that allows an NA Community to host their own translated version of the JFT.
-Version: 1.0.1
+Version: 1.0.2
 Install: Drop this directory into the "wp-content/plugins/" directory and activate it.
 */
 /* Disallow direct access to the plugin file */
@@ -51,8 +51,8 @@ function hosted_jft_func($atts = [])
         'meta_key'      => $jft_custom_field,
         'meta_value'    => $today
     ));
-    $get_title =  get_post_field('post_title', $jft_post[0]->ID);
-    $todays_jft_content =  get_post_field('post_content', $jft_post[0]->ID);
+    $get_title =  get_post_field('post_title', $jft_post[0]->ID) ?? '';
+    $todays_jft_content =  get_post_field('post_content', $jft_post[0]->ID) ?? '';
     if ($todays_jft_content && $todays_jft_content != '[hosted_jft]') {
         $todays_jft_title = '<div class="spo-title"><h2 class="spo-title">' . $get_title . '</h2></div>';
         $ret = $todays_jft_title . $todays_jft_content;
