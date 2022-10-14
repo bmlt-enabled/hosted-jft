@@ -1,4 +1,13 @@
 {
+  "name": "bmlt/hosted-jft",
+  "description": "This is a WordPress plugin for Hosted JFT.",
+  "type": "project",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "pjaudiomv"
+    }
+  ],
   "require-dev": {
     "squizlabs/php_codesniffer": "3.*"
   }
