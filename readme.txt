@@ -2,8 +2,8 @@
 
 Contributors: pjaudiomv, bmltenabled
 Tags: jft, just for today, narcotics anonymous, na, hosted jft
-Tested up to: 6.0.2
-Stable tag: 1.0.2
+Tested up to: 6.2.1
+Stable tag: 1.0.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -49,6 +49,10 @@ If using the widget these two additional settings should be set, jft_page_url an
 1. screenshot-1.png
 
 == Changelog ==
+
+= 1.0.3 =
+
+* Fixed some more php warnings.
 
 = 1.0.2 =
 
