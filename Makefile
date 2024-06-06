@@ -25,6 +25,15 @@ composer: $(VENDOR_AUTOLOAD) ## Runs composer install
 lint: composer ## PHP Lint
 	vendor/squizlabs/php_codesniffer/bin/phpcs
 
-.PHONY: lint-fix
-lint-fix: composer ## PHP Lint Fix
+.PHONY: fmt
+fmt: composer ## PHP Fmt
 	vendor/squizlabs/php_codesniffer/bin/phpcbf
+
+
+.PHONY: docs
+docs:  ## Generate Docs
+	docker run --rm -v $(shell pwd):/data phpdoc/phpdoc:3 --ignore=vendor/ run -d . -t docs/
+
+.PHONY: dev
+dev:  ## Docker up
+	docker-compose up
