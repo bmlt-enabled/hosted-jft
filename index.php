@@ -1,2 +1,1 @@
-<?php
-// Silence, she blinded me with silence.
+<?php // Silence is golden.
